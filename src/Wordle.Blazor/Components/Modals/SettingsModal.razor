@@ -1,0 +1,23 @@
+@namespace Wordle.Blazor.Components
+@inherits ModalBase
+
+<ModalContainer Closed="@Closed">
+
+    <h1>SETTINGS</h1>
+
+    <div class="flex-col flex-wrap width-100">
+        <Switch LabelText="Hard Mode" Enabled="HardMode" EnabledChanged="HardModeChanged" />
+        <Switch LabelText="Dark Mode" Enabled="DarkMode" EnabledChanged="DarkModeChanged" />
+    </div>
+
+</ModalContainer>
+
+@code {
+    [Parameter] public bool DarkMode { get; set; }
+
+    [Parameter] public bool HardMode { get; set; }
+
+    [Parameter] public EventCallback<bool> DarkModeChanged { get; set; }
+
+    [Parameter] public EventCallback<bool> HardModeChanged { get; set; }
+}

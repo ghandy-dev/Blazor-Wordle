@@ -1,0 +1,27 @@
+@namespace Wordle.Blazor.Components
+
+<div class="flex-row width-100 margin-top-2">
+    <div class="margin-right-auto">
+        <span>@LabelText</span>
+    </div>
+    <div class="margin-left-auto">
+        <input class="switch" type="checkbox" checked="@Enabled" @onchange="SwitchChangedAsync" />
+    </div>
+</div>
+
+@code {
+    [Parameter] public string? LabelText { get; set; }
+
+    [Parameter] public EventCallback<bool> EnabledChanged { get; set; }
+
+    [Parameter] public bool Enabled { get; set; }
+
+    private async Task SwitchChangedAsync(ChangeEventArgs args)
+    {
+        if (bool.TryParse(args.Value?.ToString(), out var enabled))
+        {
+            Enabled = enabled;
+            await EnabledChanged.InvokeAsync(Enabled);
+        }
+    }
+}

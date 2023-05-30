@@ -1,0 +1,21 @@
+.keyboard-container {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 1rem;
+    gap: 8px;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 6px;
+}
+
+.spacer {
+    flex-grow: 0.5;
+}
+
+.spacer-large {
+    flex-grow: 1;
+}

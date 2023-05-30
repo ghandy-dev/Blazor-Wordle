@@ -1,0 +1,49 @@
+@namespace Wordle.Blazor.Components
+@using Wordle
+
+<div class="key @state" @onclick="EventUtil.AsNonRenderingEventHandler(OnClicked)">
+    @if (!string.IsNullOrWhiteSpace(DisplayText))
+    {
+        @DisplayText
+    }
+    else
+    {
+        @KeyValue
+    }
+</div>
+
+@code {
+    [Parameter] public string KeyValue { get; set; } = "";
+
+    [Parameter] public string DisplayText { get; set; } = "";
+
+    [Parameter] public LetterState State { get; set; } = LetterState.None;
+
+    [Parameter] public Action<string>? Clicked { get; set; }
+        
+    private string state = "available";
+
+    protected override void OnParametersSet()
+    {
+        switch (State)
+        {
+            case LetterState.Absent:
+                state = "absent";
+                break;
+            case LetterState.Present:
+                state = "present";
+                break;
+            case LetterState.Correct:
+                state = "correct";
+                break;
+            case LetterState.None:
+                state = "available";
+                break;
+        }
+    }
+
+    private void OnClicked()
+    {
+        Clicked?.Invoke(KeyValue);
+    }
+}

@@ -1,0 +1,69 @@
+@using Wordle.Blazor.Enums
+
+@namespace Wordle.Blazor.Components
+
+@inherits ModalBase
+
+<ModalContainer Closed="@Closed">
+    <h1>HOW TO PLAY</h1>
+
+    <div class="flex-col text-align-center">
+        <div class="flex-col">
+            <p>Guess the word in 6 tries. Each guess reveals information about the letters in the word.</p>
+            <CompletedRow Guess="@Correct" RevealSpeed="RevealSpeed.Instant" />
+        </div>
+
+        <div class="flex-col">
+            <p>The letter is in the correct spot.</p>
+            <CompletedRow Guess="@Present" RevealSpeed="RevealSpeed.Instant" />
+        </div>
+
+        <div class="flex-col">
+            <p>The letter is in the word, but in the wrong spot.</p>
+            <CompletedRow Guess="@Absent" RevealSpeed="RevealSpeed.Instant" />
+            <p>The letter doesn't go in any spot in the word.</p>
+        </div>
+
+    </div>
+</ModalContainer>
+
+@code {
+    public static GuessModel Correct = new()
+    {
+        GuessedWord = "WEARY",
+        LetterStates = new()
+        {
+            LetterState.Correct,
+            LetterState.None,
+            LetterState.None,
+            LetterState.None,
+            LetterState.None
+        }
+    };
+
+    public static GuessModel Present = new()
+    {
+        GuessedWord = "PILLS",
+        LetterStates = new()
+        {
+            LetterState.None,
+            LetterState.Present,
+            LetterState.None,
+            LetterState.None,
+            LetterState.None
+        }
+    };
+
+    public static GuessModel Absent = new()
+    {
+        GuessedWord = "VAGUE",
+        LetterStates = new()
+        {
+            LetterState.None,
+            LetterState.None,
+            LetterState.None,
+            LetterState.Absent,
+            LetterState.None
+        }
+    };
+}

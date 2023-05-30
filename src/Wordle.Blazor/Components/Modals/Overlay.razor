@@ -1,0 +1,8 @@
+@namespace Wordle.Blazor.Components
+
+<div class="overlay" @onclick="async () => await Clicked.InvokeAsync()">
+</div>
+
+@code {
+    [Parameter] public EventCallback Clicked { get; set; }
+}

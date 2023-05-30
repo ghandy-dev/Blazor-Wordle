@@ -1,0 +1,46 @@
+@using System.Reactive.Linq
+@using System.Timers
+
+@using Wordle.Blazor.Constants
+
+
+@namespace Wordle.Blazor.Components
+
+@implements IDisposable
+
+<div class="timer">
+    @TimerText
+</div>
+
+@code {
+    private Timer _timer = new Timer(TimerConstants.CountdownTimerTick)
+    {
+        AutoReset = true,
+    };
+    private DateTime TimeUntilNextWord = new(DateTime.Today.AddDays(1).Date.Subtract(DateTime.Now).Ticks);
+    private string TimerText => TimeUntilNextWord.ToString("HH:mm:ss");
+    private IObservable<ElapsedEventArgs> Elapsed => Observable.FromEvent<ElapsedEventHandler, ElapsedEventArgs>(
+        handler => (s, e) => handler(e),
+        handler => _timer.Elapsed += handler,
+        handler => _timer.Elapsed -= handler
+    );
+    private IDisposable? _timerElapsedSubscription;
+    
+    protected override void OnInitialized()
+    {
+        _timerElapsedSubscription = Elapsed.Subscribe(OnTimerElapsed);
+        _timer.Start();
+    }
+
+    private void OnTimerElapsed(ElapsedEventArgs args)
+    {
+        TimeUntilNextWord = new(DateTime.Today.AddDays(1).Date.Subtract(DateTime.Now).Ticks);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _timer.Dispose();
+        _timerElapsedSubscription?.Dispose();
+    }
+}

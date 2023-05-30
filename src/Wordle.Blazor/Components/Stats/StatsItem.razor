@@ -1,0 +1,11 @@
+@namespace Wordle.Blazor.Components
+
+<div class="flex-col text-align-center">
+    <div class="statistic">@Statistic</div>
+    <div class="label">@Label</div>
+</div>
+
+@code {
+    [Parameter] public required string Label { get; set; }
+    [Parameter] public required string Statistic { get; set; }
+}

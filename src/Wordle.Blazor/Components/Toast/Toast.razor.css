@@ -1,0 +1,32 @@
+.toast {
+    display: flex;
+    justify-content: center;
+    word-break: break-word;
+    position: relative;
+    margin: 16px;
+    background-color: var(--white);
+    color: var(--black);
+    padding: 16px;
+    border-radius: 4px;
+    min-width: 50px;
+    font-weight: 700;
+    opacity: 1;
+}
+
+.fade {
+    animation: FadeOut 3s
+}
+
+@keyframes FadeOut {
+    0% {
+        opacity: 1;
+    }
+
+    80% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}

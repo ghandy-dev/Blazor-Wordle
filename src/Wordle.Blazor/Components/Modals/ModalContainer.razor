@@ -1,0 +1,30 @@
+@using Wordle.Blazor.Constants
+
+@namespace Wordle.Blazor.Components
+
+<div class="modal-container">
+    <Overlay Clicked="OnCloseAsync" />
+    <div class="modal @_animation">
+        <button class="close-button" @onclick="OnCloseAsync">
+            <i class="oi oi-x icon"></i>
+        </button>
+        <div class="flex-col text-align-center width-100">
+            @ChildContent
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public required RenderFragment ChildContent { get; set; }
+
+    [Parameter] public EventCallback Closed { get; set; }
+    
+    private string _animation = "fade-in";
+
+    private async Task OnCloseAsync()
+    {
+        _animation = "fade-out";
+        await Task.Delay(TimerConstants.ModalFadeOutDuration);
+        await Closed.InvokeAsync();
+    }
+}

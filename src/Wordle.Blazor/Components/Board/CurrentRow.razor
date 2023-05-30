@@ -1,0 +1,12 @@
+@using Wordle.Blazor.Constants
+@namespace Wordle.Blazor.Components
+
+<Row Animation="@_animation">
+    @for (int i = 0; i < GameRulesConstants.WordLength; i++)
+    {
+        <Tile @key=@i
+            Letter="@_guess[i]" 
+            State="@LetterState.None" 
+            Pop="@(_currentIndex - 1 == i)" />
+    }
+</Row>

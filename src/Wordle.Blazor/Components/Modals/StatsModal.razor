@@ -1,0 +1,126 @@
+@using Wordle.Blazor.Constants
+
+@namespace Wordle.Blazor.Components
+
+@inherits ModalBase
+
+<ModalContainer Closed="@Closed">
+
+    <h1>STATS</h1>
+
+    <div class="flex-row justify-content-center flex-wrap gap-1" style="margin-bottom: 4px;">
+        <StatsItem Statistic="@Stats.GamesPlayed.ToString()" Label="Played" />
+        <StatsItem Statistic="@Stats.CurrentStreak.ToString()" Label="Current Streak" />
+        <StatsItem Statistic="@Stats.MaxStreak.ToString()" Label="Max Streak" />
+        <StatsItem Statistic="@Stats.WinPercentage.ToString()" Label="Win %" />
+    </div>
+
+    <h1>Guess Distribution</h1>
+    <div class="flex-col justify-content-center align-items-center">
+        @{
+            var max = Stats.GuessDistribution.Max(x => x.Value);
+            if (max == 0) max = 1;
+
+            @for (int i = 1; i <= Constants.GameRulesConstants.MaxGuesses; i++)
+            {
+                <div class="flex width-100" style="height: 18px; margin-bottom: 4px;">
+                    <div style="margin-right: 8px;">@i</div>
+                    <div class="width-100">
+                        @if (Stats.GuessDistribution.TryGetValue(i.ToString(), out var count))
+                        {
+                            var color = i == Guesses?.Count && GameStatus == GameStatus.Win 
+                                ? "var(--color-correct)"
+                                : "var(--color-absent)";
+
+                            var width = Math.Max(((double)count / (double)max) * 100, 5);
+
+                            var justify = count == 0 
+                                ? "justify-content-center"
+                                : "justify-content-flex-end";
+
+                            var style = count == 0 
+                                ? ""
+                                : "margin-right: 4px;";
+
+                            <div class="flex" style=@($"width: {width}%; height: 100%; background-color: {color}; color: var(--white)") >
+                                <div class=@($"flex width-100 {justify}") style=@($"{style}")>
+                                    @count
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    @if (GameCompleted)
+    {
+        <div class="flex-row margin-top width-100 gap-1">
+            <div class="flex-col align-items-center justify-content-center width-50">
+                <span>Next Wordle</span>
+                <CountdownTimer/>
+             </div>
+            <div class="width-50">
+                <button id="share-button" @onclick="@EventUtil.AsNonRenderingEventHandler(CopyToClipboardAsync)">SHARE</button>
+            </div>
+        </div>
+    }
+
+</ModalContainer>
+
+@code {
+    [Inject] public required INotificationService NotificationService { get; set; }
+
+    [Inject] public required IJSRuntime JS { get; set; }
+
+    [Parameter] public required GameStats Stats { get; set; }
+
+    [Parameter] public List<GuessModel>? Guesses { get; set; }
+
+    [Parameter] public bool GameCompleted { get; set; }
+
+    [Parameter] public GameStatus GameStatus { get; set; }
+
+    [Parameter] public bool HardMode { get; set; }
+
+    private const string StartDate = "30/05/2023";
+
+    private async Task CopyToClipboardAsync()
+    {
+        if (Guesses == null)
+        {
+            return;
+        }
+
+        var from = DateTimeOffset.ParseExact(StartDate, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+        var to = DateTimeOffset.Parse(DateTimeOffset.Now.DateTime.ToShortDateString());
+        var wordleNumber = (to - from).Days+1;
+        var isHardMode = HardMode ? "*" : "";
+
+        var guessCount = Guesses.Last().LetterStates.All(state => state == LetterState.Correct) ? Guesses.Count.ToString() : "X";
+        var sb = new System.Text.StringBuilder($"B-Wordle {wordleNumber} {guessCount}/{GameRulesConstants.MaxGuesses}{isHardMode}\n");
+
+        foreach (var guess in Guesses)
+        {
+            sb.AppendLine();
+            foreach (var (letter, state) in guess.GuessedWord.Zip(guess.LetterStates))
+            {
+                var evaluation = (state) switch
+                {
+                    LetterState.Absent => "⬛",
+                    LetterState.Present => "🟨",
+                    LetterState.Correct => "🟩",
+                    _ => "",
+                };
+                sb.Append(evaluation);
+            }
+        }
+
+        var copied = await JS.InvokeAsync<bool>("copyToClipboard", sb.ToString());
+        if (copied)
+        {
+            await NotificationService.RaiseNotification("Copied results to clipboard");
+        }
+    }
+}

@@ -1,0 +1,21 @@
+.switch {
+    width: 2em;
+    height: 1em;
+    appearance: none;
+    border: 1px solid #bbb;
+    border-radius: 2em;
+    margin-left: -2em;
+    margin-top: 0.25em;
+    background-color: var(--grey-300);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-image: url("data:image/svg+xml,<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'> <circle cx='50' cy='50' r='50' fill='white' /> </svg>");
+    transition: background-position .15s ease-in-out;
+}
+
+.switch:checked {
+    background-color: var(--color-correct);
+    background-position: right center;
+    background-image: url("data:image/svg+xml,<svg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'> <circle cx='50' cy='50' r='50' fill='white' /> </svg>");
+}

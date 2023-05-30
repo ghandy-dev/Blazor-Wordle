@@ -1,0 +1,75 @@
+@namespace Wordle.Blazor.Components
+@implements IDisposable
+
+<div class="keyboard-container">
+    @for (int i = 0; i < GameService.Game.Keyboard.Rows.Length; i++)
+    {
+        var row = GameService.Game.Keyboard.Rows[i];
+        <div class="row">
+            @for (int j = 0; j < row.Length; j++)
+            {
+                var letter = row[j];
+                if ((i == 1 && j == 0))
+                {
+                    <div class="spacer"></div>
+                }
+
+                if ((i == 2 && j == 0))
+                {
+                    <div class="spacer-large">
+                        <Key @key=KeyGen.Generate() KeyValue="Enter" Clicked=OnKeyClicked />
+                    </div>
+                }
+
+                <Key @key=letter KeyValue="@letter.Letter.ToString()" State="@letter.State" Clicked=OnKeyClicked />
+
+                if ((i == 2 && j == row.Length - 1))
+                {
+                    <div class="spacer-large">
+                        <Key @key=KeyGen.Generate() KeyValue="Backspace" DisplayText="Delete" Clicked=OnKeyClicked />
+                    </div>
+                }
+
+                if ((i == 1 && j == row.Length - 1))
+                {
+                    <div class="spacer"></div>
+                }
+
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Inject] public required IKeyboardService KeyboardService { get; set; }
+
+    [Inject] public required IKeyGenerator KeyGen { get; set; }
+
+    [Inject] public required GameService GameService { get; set; }
+
+    private IDisposable? _gameEventSubscription;
+
+    private void OnKeyClicked(string key)
+    {
+        KeyboardService.RaiseEvent(new() { Key = key, });
+    }
+
+    protected override void OnInitialized()
+    {
+        _gameEventSubscription = GameService.Game.GameEventStream.Subscribe(async e => await OnGameEventAsync(e));
+    }
+
+    private async Task OnGameEventAsync(GameEvent gameEvent)
+    {
+        if (gameEvent.GameEventType == GameEventType.GuessMade)
+        {
+            await Task.Delay(Constants.TimerConstants.TileTotalRevealDuration);
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Dispose()
+    {
+        _gameEventSubscription?.Dispose();
+    }
+}

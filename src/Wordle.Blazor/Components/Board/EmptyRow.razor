@@ -1,0 +1,10 @@
+@using Wordle.Blazor.Constants
+
+@namespace Wordle.Blazor.Components
+
+<Row>
+    @for (int i = 0; i < GameRulesConstants.WordLength; i++)
+    {
+        <Tile @key=@i />
+    }
+</Row>

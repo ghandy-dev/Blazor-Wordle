@@ -1,0 +1,7 @@
+.toast-container {
+    position: absolute; 
+    z-index: 1000; 
+    left: 50%; 
+    top: var(--toast-top); 
+    transform: translate(-50%, 0);
+}

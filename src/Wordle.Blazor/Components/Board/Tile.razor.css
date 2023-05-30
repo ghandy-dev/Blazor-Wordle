@@ -1,0 +1,146 @@
+.tile {
+    display: flex;
+    color: var(--white);
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    text-transform: uppercase;
+    user-select: none;
+}
+
+@media only screen and (max-height: 700px) {
+    .tile {
+        font-size: 1.5rem;
+        width: 3rem;
+        height: 3rem;
+    }
+}
+
+@media only screen and (min-height: 700px) {
+    .tile {
+        font-size: 2rem;
+        width: 4rem;
+        height: 4rem;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    .tile {
+        font-size: 1.5rem;
+        width: 3rem;
+        height: 3rem;
+    }
+}
+
+.tile[data-state='empty'] {
+    background-color: var(--background-color);
+    border: 2px solid var(--color-absent);
+    border-radius: 4px;
+}
+
+.tile[data-state='tbd'] {
+    background-color: var(--background-color);
+    border: 2px solid var(--color-tbd);
+    border-radius: 4px;
+    color: var(--text-color);
+}
+
+.tile[data-state='correct'] {
+    background-color: var(--color-correct);
+    border: 2px solid var(--color-correct);
+    border-radius: 4px;
+}
+
+.tile[data-state='present'] {
+    background-color: var(--color-present);
+    border: 2px solid var(--color-present);
+    border-radius: 4px;
+}
+
+.tile[data-state='absent'] {
+    background-color: var(--color-absent);
+    border: 2px solid var(--color-absent);
+    border-radius: 4px;
+}
+
+.tile[data-animation='pop'] {
+    animation-name: PopIn;
+    animation-duration: 100ms;
+}
+
+@keyframes PopIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    40% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+}
+
+.tile[data-animation='flip-in'] {
+    animation-name: FlipIn;
+    animation-duration: 250ms;
+    animation-timing-function: ease-in;
+}
+
+@keyframes FlipIn {
+    0% {
+        transform: rotateX(0);
+    }
+
+    100% {
+        transform: rotateX(-90deg);
+    }
+}
+
+.tile[data-animation='flip-out'] {
+    animation-name: FlipOut;
+    animation-duration: 250ms;
+    animation-timing-function: ease-in;
+}
+
+@keyframes FlipOut {
+    0% {
+        transform: rotateX(-90deg);
+    }
+
+    100% {
+        transform: rotateX(0);
+    }
+}
+
+.tile[data-animation='win'] {
+    animation-name: Bounce;
+    animation-duration: 1000ms;
+}
+
+@keyframes Bounce {
+
+    0%,
+    20% {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(-30px);
+    }
+
+    50% {
+        transform: translateY(5px);
+    }
+
+    60% {
+        transform: translateY(-15px);
+    }
+
+    80% {
+        transform: translateY(2px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}

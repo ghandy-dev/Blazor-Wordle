@@ -1,0 +1,26 @@
+.header {
+    display: flex; 
+    flex-direction: row; 
+    align-items: center; 
+    justify-content: space-between; 
+    border-bottom: 2px solid var(--blue-500); 
+    height: var(--header-height);
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.menu-item {
+    margin-left: 0.4rem;
+    margin-right: 0.4rem;
+    font-size: 1.2rem;
+}
+
+.title {
+    font-size: 2rem;
+}
+
+@media only screen and (max-width: 400px) {
+    .title {
+        font-size: 1.2rem;
+    }
+}

@@ -1,0 +1,85 @@
+﻿@page "/"
+
+<style>
+    :root {
+        --background-color: @BackgroundColor;
+        --text-color: @TextColor;
+        --text-color-contrast: @TextColorContrast;
+        --modal-background-color: @ModalBackgroundColor;
+    }
+</style>
+
+<PageTitle>Wordle - Blazor</PageTitle>
+
+<Header HelpClicked="DisplayHelpModal" StatsClicked="DisplayStatsModal" SettingsClicked="DisplaySettingsModal" />
+<div class="game">
+    @if (_loaded)
+    {
+        <Wordle.Blazor.Components.Board />
+        <Wordle.Blazor.Components.Keyboard />
+    }
+</div>
+<ToastContainer />
+
+@if (_displayModal)
+{
+    @_modal
+}
+
+@code {
+    private string BackgroundColor => _darkMode ? "var(--dark-blue-100)" : "var(--white)";
+    private string ModalBackgroundColor => _darkMode ? "var(--dark-blue-200)" : "var(--white)";
+    private string TextColor => _darkMode ? "var(--white)" : "var(--black)";
+    private string TextColorContrast => _darkMode ? "var(--black)" : "var(--white)";
+    private RenderFragment? _modal;
+
+    private RenderFragment _helpModal => __builder =>
+    {
+        <HelpModal Closed="CloseModal" />
+    };
+
+    private RenderFragment _statsModal => __builder =>
+    {
+        <StatsModal 
+            Closed="CloseModal" 
+            Stats="@GameService.Stats" 
+            Guesses="@GameService.Guesses"
+            GameCompleted="@GameCompleted" 
+            GameStatus="@GameService.State.Status"
+            HardMode="_hardMode" />
+    };
+
+    private RenderFragment _settingsModal => __builder =>
+    {
+        <SettingsModal  
+            Closed="CloseModal" 
+            HardMode="_hardMode" 
+            HardModeChanged="OnHardModeChangedAsync"
+            DarkMode="_darkMode" 
+            DarkModeChanged="OnDarkModeChangedAsync" />
+    };
+
+    private void CloseModal()
+    {
+        _displayModal = false;
+    }
+
+    private void DisplayHelpModal()
+    {
+        _displayModal = true;
+        _modal = _helpModal;
+    }
+
+    private void DisplayStatsModal()
+    {
+        _displayModal = true;
+        _modal = _statsModal;
+    }
+
+    private void DisplaySettingsModal()
+    {
+        _displayModal = true;
+        _modal = _settingsModal;
+    }
+
+}

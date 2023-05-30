@@ -1,0 +1,75 @@
+@using Wordle.Blazor.Constants
+@using Wordle.Blazor.Enums
+@using System.Reactive.Linq
+
+@implements IDisposable
+
+@namespace Wordle.Blazor.Components
+
+<div class="board-container">
+    <div class="board">
+        @for (int i = 0; i < GameRulesConstants.MaxGuesses; i++)
+        {
+            if (i < GameService.Guesses.Count)
+            {
+                if (GameService.Guesses[i].LetterStates.All(state => state != LetterState.None))
+                {
+                    <CompletedRow @key="@RowKeys[i]" 
+                        Guess="GameService.Guesses[i]" 
+                        RevealSpeed="_revealSpeed"
+                        BounceOnCorrectGuess="_bounceOnCorrectGuess" />
+                }
+            }
+            else if (GameService.CurrentRowIndex == i && GameService.Game.Status == GameStatus.InProgress)
+            {
+                <CurrentRow @key="@RowKeys[i]" />
+            }
+            else
+            {
+                <EmptyRow @key="@RowKeys[i]" />
+            }
+        }
+    </div>
+</div>
+
+@code {
+    [Inject] public required IKeyGenerator KeyGen { get; set; }
+
+    [Inject] public required GameService GameService { get; set; }
+
+    private List<string> RowKeys { get; set; } = null!;
+    private RevealSpeed _revealSpeed = RevealSpeed.Standard;
+    private bool _bounceOnCorrectGuess;
+    private IDisposable? _gameEventSubscription;
+
+    public void Dispose()
+    {
+        _gameEventSubscription?.Dispose();
+    }
+
+    protected override void OnInitialized()
+    {
+        var status = GameService.Game.Status;
+
+        RowKeys = new(KeyGen.GenerateMultipleKeys(GameRulesConstants.MaxGuesses));
+        if (status == GameStatus.InProgress || status == GameStatus.Win || status == GameStatus.Loss)
+        {
+            _revealSpeed = RevealSpeed.Fast;
+        }
+        else
+        {
+            _revealSpeed = RevealSpeed.Standard;
+        }
+
+        _bounceOnCorrectGuess = status == GameStatus.InProgress;
+
+        _gameEventSubscription = GameService.Game.GameEventStream
+            .Where(e => e.GameEventType == GameEventType.GuessMade)
+            .Subscribe(async _ => await InvokeAsync(StateHasChanged));
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        _revealSpeed = RevealSpeed.Standard;
+    }
+}

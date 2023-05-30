@@ -1,0 +1,41 @@
+@namespace Wordle.Blazor.Components
+
+<header class="header">
+    <div class="flex justify-content-flex-start">
+        <div class="flex-row">
+            <div class="menu-item">
+                <button @onclick="EventUtil.AsNonRenderingEventHandler(HelpClicked.InvokeAsync)">
+                    <i class="icon oi oi-question-mark" style="margin-bottom: 0.3rem;"> </i>
+                </button>
+            </div>
+            <i class="menu-item"> </i>
+        </div>
+    </div>
+    <div class="flex justify-content-center">
+        <div class="title">
+            Wordle.Blazor
+        </div>
+    </div>
+    <div class="flex justify-content-flex-end">
+        <div class="flex-row">
+            <div class="menu-item">
+                <button @onclick="EventUtil.AsNonRenderingEventHandler(StatsClicked.InvokeAsync)">
+                    <i class="icon oi oi-bar-chart"> </i>
+                </button>
+            </div>
+            <div class="menu-item">
+                <button @onclick="EventUtil.AsNonRenderingEventHandler(SettingsClicked.InvokeAsync)">
+                    <i class="icon oi oi-cog"> </i>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+@code {
+    [Parameter] public EventCallback HelpClicked { get; set; }
+
+    [Parameter] public EventCallback StatsClicked { get; set; }
+
+    [Parameter] public EventCallback SettingsClicked { get; set; }
+}
