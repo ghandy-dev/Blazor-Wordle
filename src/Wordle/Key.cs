@@ -1,16 +1,10 @@
 ﻿namespace Wordle;
 
-public class Key
+public class Key(char letter)
 {
-    public char Letter { get; }
+    public char Letter { get; } = letter;
 
-    public LetterState State { get; set; }
-
-    public Key(char letter) 
-    {
-        Letter = letter;
-        State = LetterState.None;
-    }
+    public LetterState State { get; set; } = LetterState.None;
 
     public static implicit operator Key(char s) => new(s);
 }
